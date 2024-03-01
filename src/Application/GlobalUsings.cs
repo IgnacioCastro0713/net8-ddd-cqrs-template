@@ -2,6 +2,10 @@
 
 global using FluentValidation;
 global using MediatR;
-global using Domain.Common;
+global using Mapster;
+global using Domain.Shared;
 global using Domain.Entities;
 global using Domain.Errors;
+global using Application.Abstractions.Messaging;
+global using Application.Abstractions.Providers;
+global using Application.Abstractions.Repositories;

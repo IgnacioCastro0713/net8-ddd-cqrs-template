@@ -2,27 +2,68 @@
 
 namespace Infrastructure.Persistence.EntityConfigurations;
 
-public abstract class BaseEntityTypeConfiguration<TBase> : IEntityTypeConfiguration<TBase>
-	where TBase : BaseEntity
+public abstract class BaseEntityTypeConfiguration<TAuditableEntity> : IEntityTypeConfiguration<TAuditableEntity>
+	where TAuditableEntity : BaseAuditableEntity
 {
-	public virtual void Configure(EntityTypeBuilder<TBase> builder)
+	public virtual void Configure(EntityTypeBuilder<TAuditableEntity> builder)
 	{
+		#region Properties
+
+		builder
+			.Property(entity => entity.CreatedAt)
+			.HasColumnType("datetime")
+			.IsRequired(false);
+
 		builder
 			.Property(entity => entity.CreatedBy)
-			.HasMaxLength(150)
+			.IsRequired(false);
+
+		builder
+			.Property(entity => entity.UpdatedAt)
+			.HasColumnType("datetime")
 			.IsRequired(false);
 
 		builder
 			.Property(entity => entity.UpdatedBy)
-			.HasMaxLength(150)
 			.IsRequired(false);
 
 		builder
-			.Property(entity => entity.CreatedAt)
-			.HasColumnType("datetime");
+			.Property(e => e.DeletedAt)
+			.HasColumnType("datetime")
+			.IsRequired(false);
 
 		builder
-			.Property(entity => entity.UpdatedAt)
-			.HasColumnType("datetime");
+			.Property(entity => entity.DeletedBy)
+			.IsRequired(false);
+
+		#endregion
+
+		#region SoftDelete
+
+		builder.HasQueryFilter(e => e.DeletedAt == null);
+
+		#endregion
+
+		#region Relationships
+
+		builder
+			.HasOne<User>()
+			.WithMany()
+			.HasForeignKey(e => e.CreatedBy)
+			.IsRequired(false);
+
+		builder
+			.HasOne<User>()
+			.WithMany()
+			.HasForeignKey(e => e.UpdatedBy)
+			.IsRequired(false);
+
+		builder
+			.HasOne<User>()
+			.WithMany()
+			.HasForeignKey(e => e.DeletedBy)
+			.IsRequired(false);
+
+		#endregion
 	}
 }

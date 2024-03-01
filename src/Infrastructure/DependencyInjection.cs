@@ -1,17 +1,52 @@
-﻿using Infrastructure.Persistence;
+﻿using Infrastructure.Interceptors;
+using Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Infrastructure;
 
 public static class DependencyInjection
 {
-	public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-	{
-		services
-			.AddDbContext<ApplicationDbContext>(options =>
-				options.UseSqlServer(configuration.GetConnectionString("Connection")));
+    public static IServiceCollection AddInfrastructureDependencyInjection(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services
+            .AddInfrastructureAssemblyScanning()
+            .AddDbContextConfiguration(configuration);
 
-		return services;
-	}
+        return services;
+    }
+
+    private static IServiceCollection AddInfrastructureAssemblyScanning(this IServiceCollection services)
+    {
+        services.Scan(selector => selector
+            .FromAssemblies(AssemblyReference.Assembly)
+            .AddClasses(false)
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsMatchingInterface()
+            .WithScopedLifetime());
+
+        return services;
+    }
+
+    private static IServiceCollection AddDbContextConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddScoped<AuditableEntityInterceptor>();
+        services.AddScoped<SoftDeleteInterceptor>();
+
+        services.AddDbContext<ApplicationDbContext>((provider, options) =>
+        {
+            options
+                .UseSqlServer(configuration.GetConnectionString("Connection"))
+                .AddInterceptors(
+                    provider.GetRequiredService<AuditableEntityInterceptor>(),
+                    provider.GetRequiredService<SoftDeleteInterceptor>());
+        });
+
+        return services;
+    }
 }

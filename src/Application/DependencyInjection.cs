@@ -1,22 +1,54 @@
 ﻿using Application.Behaviours;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Application;
 
 public static class DependencyInjection
 {
-	public static IServiceCollection AddApplication(this IServiceCollection services)
-	{
-		services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
+    public static IServiceCollection AddApplicationDependencyInjection(this IServiceCollection services)
+    {
+        services
+            .AddApplicationAssemblyScanning()
+            .AddValidatorsFromAssembly(AssemblyReference.Assembly)
+            .AddMediatRConfiguration()
+            .AddMappings();
 
-		services.AddMediatR(cfg =>
-		{
-			cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly);
-			cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-			cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
-			cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-		});
+        return services;
+    }
 
-		return services;
-	}
+    private static IServiceCollection AddApplicationAssemblyScanning(this IServiceCollection services)
+    {
+        services.Scan(selector => selector
+            .FromAssemblies(AssemblyReference.Assembly)
+            .AddClasses(false)
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsMatchingInterface()
+            .WithScopedLifetime());
+
+        return services;
+    }
+
+    private static IServiceCollection AddMediatRConfiguration(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly);
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddMappings(this IServiceCollection services)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(AssemblyReference.Assembly);
+
+        services.AddSingleton(config);
+
+        return services;
+    }
 }

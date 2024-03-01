@@ -1,28 +1,21 @@
-using Api.Middlewares;
+using Api;
+using Api.Core.Middlewares;
 using Application;
 using Infrastructure;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     var configuration = builder.Configuration;
     var services = builder.Services;
 
-    services.AddControllers();
     services
-        .Scan(selector => selector
-            .FromAssemblies(
-                Infrastructure.AssemblyReference.Assembly,
-                Application.AssemblyReference.Assembly
-            )
-            .AddClasses(false)
-            .AsMatchingInterface()
-            .WithScopedLifetime())
-        .AddInfrastructure(configuration)
-        .AddApplication()
-        .AddEndpointsApiExplorer()
-        .AddSwaggerGen()
-        .AddExceptionHandler<GlobalExceptionHandler>()
-        .AddProblemDetails();
+        .AddApiDependencyInjection(configuration)
+        .AddApplicationDependencyInjection()
+        .AddInfrastructureDependencyInjection(configuration);
+
+    builder.Host.UseSerilog((context, loggerConfiguration) =>
+        loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 }
 
 var app = builder.Build();
@@ -30,14 +23,19 @@ var app = builder.Build();
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI(opt => opt.DefaultModelsExpandDepth(-1));
+        app.UseSwaggerUI(opt =>
+        {
+            opt.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            opt.DefaultModelsExpandDepth(-1);
+        });
     }
-    
-    app.UseExceptionHandler()
-        .UseHttpsRedirection()
-        .UseAuthorization();
-    
 
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseCors("_AllowedPolicies");
+    app.UseMiddleware<GlobalExceptionMiddleware>();
+    app.UseSerilogRequestLogging();
     app.MapControllers();
 }
 
