@@ -2,10 +2,10 @@
 
 namespace Domain.Shared;
 
-public abstract record Paginated
+public sealed record Paginated
 {
-    public virtual int PageNumber { get; set; } = 1;
-    public virtual int PageSize { get; set; } = 10;
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
 }
 
 public class PaginatedOf<T>(IReadOnlyCollection<T> items, int count, int pageNumber, int pageSize)
