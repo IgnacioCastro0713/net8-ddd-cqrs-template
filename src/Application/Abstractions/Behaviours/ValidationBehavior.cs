@@ -1,4 +1,4 @@
-namespace Application.Behaviours;
+namespace Application.Abstractions.Behaviours;
 
 public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>

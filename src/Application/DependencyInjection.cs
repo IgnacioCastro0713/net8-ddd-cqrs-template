@@ -1,4 +1,4 @@
-﻿using Application.Behaviours;
+﻿using Application.Abstractions.Behaviours;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 

@@ -6,6 +6,8 @@ public sealed record Paginated
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
+    public string? SortColumn { get; set; } = string.Empty;
+    public string? Direction { get; set; } = "ASC";
 }
 
 public class PaginatedOf<T>(IReadOnlyCollection<T> items, int count, int pageNumber, int pageSize)

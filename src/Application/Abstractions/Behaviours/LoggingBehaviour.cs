@@ -1,7 +1,6 @@
-﻿using Application.Abstractions.Providers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
-namespace Application.Behaviours;
+namespace Application.Abstractions.Behaviours;
 
 public class LoggingBehaviour<TRequest, TResponse>(
 	ILogger<TRequest> logger,

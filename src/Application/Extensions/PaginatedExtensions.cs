@@ -8,10 +8,12 @@ public static class PaginatedExtensions
         this IQueryable<TDestination> queryable,
         int pageNumber,
         int pageSize,
+        string sortColumn = "",
+        string direction = "ASC",
         CancellationToken cancellationToken = default) where TDestination : class
     {
         return PaginatedOf<TDestination>.CreateAsync(
-            queryable.AsNoTracking(),
+            queryable.AsNoTracking().OrderBy(sortColumn, direction),
             pageNumber,
             pageSize,
             cancellationToken);
@@ -23,7 +25,7 @@ public static class PaginatedExtensions
         CancellationToken cancellationToken = default) where TDestination : class
     {
         return PaginatedOf<TDestination>.CreateAsync(
-            queryable.AsNoTracking(),
+            queryable.AsNoTracking().OrderBy(paginated.SortColumn, paginated.Direction),
             paginated.PageNumber,
             paginated.PageSize,
             cancellationToken);
