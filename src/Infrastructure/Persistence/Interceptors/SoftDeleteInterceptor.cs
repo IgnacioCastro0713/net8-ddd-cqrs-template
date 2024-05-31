@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Infrastructure.Interceptors;
+namespace Infrastructure.Persistence.Interceptors;
 
 public sealed class SoftDeleteInterceptor(
     IUserContextProvider userContextProvider,

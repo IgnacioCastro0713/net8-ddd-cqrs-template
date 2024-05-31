@@ -1,5 +1,5 @@
-﻿using Infrastructure.Interceptors;
-using Infrastructure.Persistence;
+﻿using Infrastructure.Persistence;
+using Infrastructure.Persistence.Interceptors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
