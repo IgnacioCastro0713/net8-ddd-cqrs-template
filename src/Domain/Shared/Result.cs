@@ -15,10 +15,14 @@ public static class ResultState
 
 public class Result<T> : IResult
 {
-    public readonly T Value;
-    public bool IsSuccess { get; }
+    public T Value { get; set; } = default!;
+    public bool IsSuccess { get; set; }
     public bool IsFailure => !IsSuccess;
-    public Error Error { get; }
+    public Error Error { get; set; } = null!;
+
+    public Result()
+    {
+    }
 
     private Result(T value)
     {

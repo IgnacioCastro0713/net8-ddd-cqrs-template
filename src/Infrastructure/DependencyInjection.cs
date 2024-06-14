@@ -1,5 +1,7 @@
-﻿using Infrastructure.Persistence;
+﻿using Application.Abstractions.Services.Cache;
+using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
+using Infrastructure.Services.Cache;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
@@ -13,6 +15,8 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services
+            .AddMemoryCache()
+            .AddDistributedMemoryCache()
             .AddInfrastructureAssemblyScanning()
             .AddDbContextConfiguration(configuration);
 
@@ -21,6 +25,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddInfrastructureAssemblyScanning(this IServiceCollection services)
     {
+        services.AddSingleton<ICacheService, CacheService>();
         services.Scan(selector => selector
             .FromAssemblies(AssemblyReference.Assembly)
             .AddClasses(false)

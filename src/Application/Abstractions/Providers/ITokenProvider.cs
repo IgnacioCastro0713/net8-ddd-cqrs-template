@@ -4,5 +4,5 @@ namespace Application.Abstractions.Providers;
 
 public interface ITokenProvider
 {
-    public TokenResponseDto Generate(TokenRequestDto request);
+    TokenResponseDto Generate(TokenRequestDto request);
 }

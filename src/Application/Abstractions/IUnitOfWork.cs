@@ -4,6 +4,6 @@ namespace Application.Abstractions;
 
 public interface IUnitOfWork
 {
-	public Task SaveChangesAsync(CancellationToken cancellationToken = default);
-	public IDbTransaction BeginTransaction();
+	Task SaveChangesAsync(CancellationToken cancellationToken = default);
+	IDbTransaction BeginTransaction();
 }

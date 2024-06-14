@@ -1,6 +1,5 @@
+using System.Text.Json;
 using Application.Exceptions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Api.Core.Middlewares;
 
@@ -14,9 +13,9 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException }
     };
 
-    private static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    private static readonly JsonSerializerOptions JsonSerializerSettings = new()
     {
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private const string ContentType = "application/json";
@@ -47,16 +46,16 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         httpContext.Response.ContentType = ContentType;
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        var response = JsonConvert.SerializeObject(new
+        var response = new
         {
             Type = IetfDocRfc.BadRequest,
             Status = StatusCodes.Status400BadRequest,
             Title = "Bad Request",
             Detail = ex.Message,
             exception.Errors
-        }, JsonSerializerSettings);
+        };
 
-        await httpContext.Response.WriteAsync(response);
+        await httpContext.Response.WriteAsJsonAsync(response, JsonSerializerSettings);
     }
 
     private static async Task HandleNotFoundException(HttpContext httpContext, Exception ex)
@@ -64,15 +63,15 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         httpContext.Response.ContentType = ContentType;
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
 
-        var response = JsonConvert.SerializeObject(new
+        var response = new
         {
             Type = IetfDocRfc.NotFound,
             Status = StatusCodes.Status404NotFound,
             Title = "The specified resource was not found.",
             Detail = ex.Message
-        }, JsonSerializerSettings);
+        };
 
-        await httpContext.Response.WriteAsync(response);
+        await httpContext.Response.WriteAsJsonAsync(response, JsonSerializerSettings);
     }
 
     private static async Task HandleUnauthorizedAccessException(HttpContext httpContext, Exception ex)
@@ -80,14 +79,14 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         httpContext.Response.ContentType = ContentType;
         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-        var response = JsonConvert.SerializeObject(new
+        var response = new
         {
             Type = IetfDocRfc.Unauthorized,
             Status = StatusCodes.Status401Unauthorized,
             Title = "Unauthorized"
-        }, JsonSerializerSettings);
+        };
 
-        await httpContext.Response.WriteAsync(response);
+        await httpContext.Response.WriteAsJsonAsync(response, JsonSerializerSettings);
     }
 
     private static async Task HandleInternalServerException(HttpContext httpContext, Exception ex)
@@ -95,14 +94,14 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         httpContext.Response.ContentType = ContentType;
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-        var response = JsonConvert.SerializeObject(new
+        var response = new
         {
             Type = IetfDocRfc.InternalServerError,
             Status = StatusCodes.Status500InternalServerError,
             Title = "Internal Server",
             Detail = ex.Message
-        }, JsonSerializerSettings);
+        };
 
-        await httpContext.Response.WriteAsync(response);
+        await httpContext.Response.WriteAsJsonAsync(response, JsonSerializerSettings);
     }
 }
