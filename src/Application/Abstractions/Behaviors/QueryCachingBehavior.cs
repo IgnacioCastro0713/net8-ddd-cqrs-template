@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Services.Cache;
+﻿using Application.Abstractions.Services.Caching;
 
 namespace Application.Abstractions.Behaviors;
 

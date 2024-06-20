@@ -1,7 +1,7 @@
-﻿using Application.Abstractions.Services.Cache;
+﻿using Application.Abstractions.Services.Caching;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
-using Infrastructure.Services.Cache;
+using Infrastructure.Services.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
