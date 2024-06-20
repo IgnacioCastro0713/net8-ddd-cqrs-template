@@ -12,5 +12,5 @@ public class ValidationException() : Exception("One or more validation failures 
             .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
     }
 
-    public IDictionary<string, string[]> Errors { get; } = new Dictionary<string, string[]>();
+    public Dictionary<string, string[]> Errors { get; } = new();
 }

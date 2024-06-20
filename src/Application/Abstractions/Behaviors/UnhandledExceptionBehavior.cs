@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Application.Abstractions.Behaviours;
+namespace Application.Abstractions.Behaviors;
 
-public class UnhandledExceptionBehaviour<TRequest, TResponse>(ILogger<TRequest> logger)
+public class UnhandledExceptionBehavior<TRequest, TResponse>(ILogger<TRequest> logger)
 	: IPipelineBehavior<TRequest, TResponse>
 	where TRequest : notnull
 {

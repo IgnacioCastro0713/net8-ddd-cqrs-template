@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Application.Abstractions.Behaviours;
+namespace Application.Abstractions.Behaviors;
 
-public class LoggingBehaviour<TRequest, TResponse>(
+public class LoggingBehavior<TRequest, TResponse>(
 	ILogger<TRequest> logger,
 	IUserContextProvider userContextProvider)
 	: IPipelineBehavior<TRequest, TResponse>

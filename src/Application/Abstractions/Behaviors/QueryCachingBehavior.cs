@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Services.Cache;
 
-namespace Application.Abstractions.Behaviours;
+namespace Application.Abstractions.Behaviors;
 
 public sealed class QueryCachingBehavior<TRequest, TResponse>(ICacheService cacheService)
 	: IPipelineBehavior<TRequest, TResponse>
