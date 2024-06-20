@@ -13,11 +13,7 @@ public sealed class CacheInvalidationBehavior<TRequest, TResponse>(ICacheService
 	{
 		var response = await next();
 
-		var tasks = request
-			.CacheKeysToInvalidate
-			.Select(key => cacheService.RemoveAsync(key, cancellationToken));
-
-		await Task.WhenAll(tasks);
+		await cacheService.RemoveByKeysAsync(request.CacheKeysToInvalidate, cancellationToken);
 
 		return response;
 	}

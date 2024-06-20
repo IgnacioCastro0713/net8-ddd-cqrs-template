@@ -60,4 +60,11 @@ public sealed class CacheService(IDistributedCache cache) : ICacheService
     {
         await cache.RemoveAsync(key, cancellationToken);
     }
+    
+    public async Task RemoveByKeysAsync(IEnumerable<string> keys, CancellationToken cancellationToken = default)
+    {
+        var tasksToInvalidate = keys.Select(key => cache.RemoveAsync(key, cancellationToken));
+
+        await Task.WhenAll(tasksToInvalidate);
+    }
 }
